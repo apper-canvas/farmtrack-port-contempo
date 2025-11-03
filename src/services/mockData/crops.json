@@ -1,0 +1,80 @@
+[
+  {
+    "Id": 1,
+    "farmId": "1",
+    "name": "Sweet Corn",
+    "variety": "Silver Queen",
+    "quantity": 500,
+    "unit": "seeds",
+    "plantingDate": "2024-04-15",
+    "expectedHarvest": "2024-07-15",
+    "status": "growing",
+    "notes": "First planting of the season. Soil tested at 6.5 pH.",
+    "createdAt": "2024-04-15T09:00:00Z"
+  },
+  {
+    "Id": 2,
+    "farmId": "1", 
+    "name": "Roma Tomatoes",
+    "variety": "San Marzano",
+    "quantity": 200,
+    "unit": "plants",
+    "plantingDate": "2024-05-01",
+    "expectedHarvest": "2024-08-01",
+    "status": "growing",
+    "notes": "Staked and mulched. Regular watering schedule established.",
+    "createdAt": "2024-05-01T11:30:00Z"
+  },
+  {
+    "Id": 3,
+    "farmId": "2",
+    "name": "Winter Wheat",
+    "variety": "Hard Red Winter",
+    "quantity": 25,
+    "unit": "acres",
+    "plantingDate": "2024-03-20",
+    "expectedHarvest": "2024-07-20",
+    "status": "ready",
+    "notes": "Excellent growth this season. Ready for harvest.",
+    "createdAt": "2024-03-20T07:45:00Z"
+  },
+  {
+    "Id": 4,
+    "farmId": "1",
+    "name": "Lettuce",
+    "variety": "Buttercrunch",
+    "quantity": 1000,
+    "unit": "plants",
+    "plantingDate": "2024-03-01",
+    "expectedHarvest": "2024-05-15",
+    "status": "harvested",
+    "notes": "Successful spring harvest. Yielded 2000 heads.",
+    "createdAt": "2024-03-01T10:15:00Z"
+  },
+  {
+    "Id": 5,
+    "farmId": "3",
+    "name": "Soybeans",
+    "variety": "Pioneer P22T41R",
+    "quantity": 45,
+    "unit": "acres",
+    "plantingDate": "2024-05-15",
+    "expectedHarvest": "2024-09-30",
+    "status": "growing",
+    "notes": "Planted at 140k population. No-till method used.",
+    "createdAt": "2024-05-15T08:00:00Z"
+  },
+  {
+    "Id": 6,
+    "farmId": "2",
+    "name": "Bell Peppers",
+    "variety": "California Wonder",
+    "quantity": 150,
+    "unit": "plants", 
+    "plantingDate": "2024-04-20",
+    "expectedHarvest": "2024-07-30",
+    "status": "planted",
+    "notes": "Recently transplanted. Using drip irrigation system.",
+    "createdAt": "2024-04-20T13:20:00Z"
+  }
+]

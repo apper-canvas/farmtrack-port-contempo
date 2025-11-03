@@ -1,0 +1,134 @@
+[
+  {
+    "Id": 1,
+    "farmId": "1",
+    "cropId": "1",
+    "type": "expense",
+    "category": "seeds",
+    "amount": 450.00,
+    "description": "Sweet corn seeds - Silver Queen variety",
+    "date": "2024-04-10",
+    "createdAt": "2024-04-10T09:30:00Z"
+  },
+  {
+    "Id": 2,
+    "farmId": "1",
+    "cropId": "2",
+    "type": "expense",
+    "category": "fertilizer",
+    "amount": 285.50,
+    "description": "Organic tomato fertilizer and soil amendment",
+    "date": "2024-04-25",
+    "createdAt": "2024-04-25T14:15:00Z"
+  },
+  {
+    "Id": 3,
+    "farmId": "1",
+    "cropId": "4",
+    "type": "income",
+    "category": "crop-sales",
+    "amount": 3200.00,
+    "description": "Lettuce harvest sale to local grocery stores",
+    "date": "2024-05-20",
+    "createdAt": "2024-05-20T11:45:00Z"
+  },
+  {
+    "Id": 4,
+    "farmId": "2",
+    "cropId": "",
+    "type": "expense",
+    "category": "fuel",
+    "amount": 850.00,
+    "description": "Diesel fuel for tractors and harvesting equipment",
+    "date": "2024-06-01",
+    "createdAt": "2024-06-01T08:20:00Z"
+  },
+  {
+    "Id": 5,
+    "farmId": "1",
+    "cropId": "",
+    "type": "expense",
+    "category": "irrigation",
+    "amount": 125.75,
+    "description": "Sprinkler system repairs and parts replacement",
+    "date": "2024-06-15",
+    "createdAt": "2024-06-15T16:30:00Z"
+  },
+  {
+    "Id": 6,
+    "farmId": "3",
+    "cropId": "5",
+    "type": "expense",
+    "category": "seeds",
+    "amount": 1200.00,
+    "description": "Soybean seeds - Pioneer variety for 45 acres", 
+    "date": "2024-05-10",
+    "createdAt": "2024-05-10T10:00:00Z"
+  },
+  {
+    "Id": 7,
+    "farmId": "2",
+    "cropId": "3",
+    "type": "income", 
+    "category": "crop-sales",
+    "amount": 5650.00,
+    "description": "Winter wheat harvest sale to grain elevator",
+    "date": "2024-07-22",
+    "createdAt": "2024-07-22T13:15:00Z"
+  },
+  {
+    "Id": 8,
+    "farmId": "1",
+    "cropId": "",
+    "type": "expense",
+    "category": "labor",
+    "amount": 1800.00,
+    "description": "Seasonal worker wages for June planting activities",
+    "date": "2024-06-30",
+    "createdAt": "2024-06-30T17:45:00Z"
+  },
+  {
+    "Id": 9,
+    "farmId": "2",
+    "cropId": "6",
+    "type": "expense",
+    "category": "pesticide",
+    "amount": 95.25,
+    "description": "Organic pest control spray for bell peppers",
+    "date": "2024-06-20",
+    "createdAt": "2024-06-20T12:10:00Z"
+  },
+  {
+    "Id": 10,
+    "farmId": "1",
+    "cropId": "2",
+    "type": "expense",
+    "category": "equipment",
+    "amount": 350.00,
+    "description": "Tomato cages and support stakes",
+    "date": "2024-05-05",
+    "createdAt": "2024-05-05T09:55:00Z"
+  },
+  {
+    "Id": 11,
+    "farmId": "3",
+    "cropId": "",
+    "type": "income",
+    "category": "government-subsidy",
+    "amount": 2400.00,
+    "description": "USDA conservation program payment",
+    "date": "2024-07-01",
+    "createdAt": "2024-07-01T08:00:00Z"
+  },
+  {
+    "Id": 12,
+    "farmId": "1",
+    "cropId": "",
+    "type": "expense",
+    "category": "maintenance",
+    "amount": 275.50,
+    "description": "Tractor maintenance and oil change",
+    "date": "2024-07-03",
+    "createdAt": "2024-07-03T15:20:00Z"
+  }
+]

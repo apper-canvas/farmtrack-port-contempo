@@ -1,0 +1,26 @@
+[
+  {
+    "Id": 1,
+    "name": "Green Valley Farm",
+    "size": 150,
+    "unit": "acres",
+    "location": "Fresno County, CA",
+    "createdAt": "2024-01-15T08:30:00Z"
+  },
+  {
+    "Id": 2,
+    "name": "Sunrise Agriculture",
+    "size": 85,
+    "unit": "acres",
+    "location": "Kern County, CA", 
+    "createdAt": "2024-02-20T10:15:00Z"
+  },
+  {
+    "Id": 3,
+    "name": "Prairie Winds Ranch",
+    "size": 220,
+    "unit": "acres",
+    "location": "Lancaster County, NE",
+    "createdAt": "2024-03-10T14:45:00Z"
+  }
+]
