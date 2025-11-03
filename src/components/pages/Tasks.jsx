@@ -95,11 +95,11 @@ const Tasks = ({ selectedFarm }) => {
     }
 
     // Sort tasks: overdue first, then by due date
-    filtered.sort((a, b) => {
+filtered.sort((a, b) => {
       const aDate = new Date(a.dueDate);
       const bDate = new Date(b.dueDate);
-      const aOverdue = task.status === "pending" && isBefore(startOfDay(aDate), today);
-      const bOverdue = task.status === "pending" && isBefore(startOfDay(bDate), today);
+      const aOverdue = a.status === "pending" && isBefore(startOfDay(aDate), today);
+      const bOverdue = b.status === "pending" && isBefore(startOfDay(bDate), today);
       
       if (aOverdue && !bOverdue) return -1;
       if (!aOverdue && bOverdue) return 1;
