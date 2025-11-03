@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { toast } from "react-toastify";
+import Chart from "react-apexcharts";
 import Button from "@/components/atoms/Button";
 import Card from "@/components/atoms/Card";
 import SearchBar from "@/components/molecules/SearchBar";
@@ -13,7 +14,7 @@ import ApperIcon from "@/components/ApperIcon";
 import { farmService } from "@/services/api/farmService";
 import { cropService } from "@/services/api/cropService";
 import { transactionService } from "@/services/api/transactionService";
-import { format, startOfMonth, endOfMonth, startOfYear, endOfYear, subMonths } from "date-fns";
+import { format, startOfMonth, endOfMonth, startOfYear, endOfYear, subMonths, eachMonthOfInterval } from "date-fns";
 
 const Finances = ({ selectedFarm }) => {
   const [transactions, setTransactions] = useState([]);
@@ -23,12 +24,12 @@ const Finances = ({ selectedFarm }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   
-  const [isModalOpen, setIsModalOpen] = useState(false);
+const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingTransaction, setEditingTransaction] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [activeTab, setActiveTab] = useState("all");
   const [timePeriod, setTimePeriod] = useState("month");
-
+  const [chartsLoading, setChartsLoading] = useState(false);
   const loadData = async () => {
     try {
       setError("");
@@ -137,7 +138,7 @@ const Finances = ({ selectedFarm }) => {
     }
   };
 
-  const getFinancialStats = () => {
+const getFinancialStats = () => {
     const baseTransactions = selectedFarm 
       ? transactions.filter(tx => tx.farmId === selectedFarm)
       : transactions;
@@ -158,7 +159,55 @@ const Finances = ({ selectedFarm }) => {
 
     const profit = income - expenses;
 
-    return { expenses, income, profit, periodTransactions };
+    // Chart data preparation
+    const expensesByCategory = periodTransactions
+      .filter(tx => tx.type === "expense")
+      .reduce((acc, tx) => {
+        const category = tx.category || "Other";
+        acc[category] = (acc[category] || 0) + tx.amount;
+        return acc;
+      }, {});
+
+    const chartData = {
+      expenseDistribution: {
+        categories: Object.keys(expensesByCategory),
+        values: Object.values(expensesByCategory),
+      },
+      timelineData: getTimelineData(baseTransactions, start, end)
+    };
+
+    return { expenses, income, profit, periodTransactions, chartData };
+  };
+
+  const getTimelineData = (transactions, startDate, endDate) => {
+    const months = eachMonthOfInterval({ start: startDate, end: endDate });
+    
+    const monthlyData = months.map(month => {
+      const monthStart = startOfMonth(month);
+      const monthEnd = endOfMonth(month);
+      
+      const monthTransactions = transactions.filter(tx => {
+        const txDate = new Date(tx.date);
+        return txDate >= monthStart && txDate <= monthEnd;
+      });
+
+      const monthlyIncome = monthTransactions
+        .filter(tx => tx.type === "income")
+        .reduce((sum, tx) => sum + tx.amount, 0);
+      
+      const monthlyExpenses = monthTransactions
+        .filter(tx => tx.type === "expense")
+        .reduce((sum, tx) => sum + tx.amount, 0);
+
+      return {
+        month: format(month, "MMM yyyy"),
+        income: monthlyIncome,
+        expenses: monthlyExpenses,
+        profit: monthlyIncome - monthlyExpenses
+      };
+    });
+
+    return monthlyData;
   };
 
   const getTabCounts = () => {
@@ -179,8 +228,121 @@ const Finances = ({ selectedFarm }) => {
     ).join(" ");
   };
 
-  const getCrop = (cropId) => crops.find(c => c.Id === cropId);
+const getCrop = (cropId) => crops.find(c => c.Id === cropId);
 
+  const getExpenseChartOptions = () => ({
+    chart: {
+      type: 'pie',
+      fontFamily: 'Inter, sans-serif',
+    },
+    labels: [],
+    colors: ['#2d5016', '#7cb342', '#4caf50', '#8bc34a', '#cddc39', '#ffeb3b', '#ffc107', '#ff9800', '#ff5722'],
+    legend: {
+      position: 'bottom',
+      horizontalAlign: 'center',
+      fontSize: '14px',
+      fontFamily: 'Inter, sans-serif',
+    },
+    plotOptions: {
+      pie: {
+        donut: {
+          size: '65%',
+          labels: {
+            show: true,
+            name: {
+              fontSize: '16px',
+              fontFamily: 'Inter, sans-serif',
+              fontWeight: 600,
+            },
+            value: {
+              fontSize: '24px',
+              fontFamily: 'Inter, sans-serif',
+              fontWeight: 700,
+              formatter: (val) => `$${parseInt(val).toLocaleString()}`
+            },
+            total: {
+              show: true,
+              label: 'Total Expenses',
+              fontSize: '14px',
+              fontFamily: 'Inter, sans-serif',
+              formatter: () => `$${(chartData?.expenseDistribution?.values?.reduce((a, b) => a + b, 0) || 0).toLocaleString()}`
+            }
+          }
+        }
+      }
+    },
+    dataLabels: {
+      enabled: true,
+      formatter: (val, opts) => {
+        const value = opts.w.config.series[opts.seriesIndex];
+        return `$${value.toLocaleString()}`;
+      },
+      style: {
+        fontSize: '12px',
+        fontFamily: 'Inter, sans-serif',
+        fontWeight: 600,
+      }
+    },
+    tooltip: {
+      y: {
+        formatter: (val) => `$${val.toLocaleString()}`
+      }
+    }
+  });
+
+  const getTimelineChartOptions = () => ({
+    chart: {
+      type: 'line',
+      fontFamily: 'Inter, sans-serif',
+      toolbar: {
+        show: false
+      },
+      zoom: {
+        enabled: false
+      }
+    },
+    stroke: {
+      curve: 'smooth',
+      width: [3, 3, 2]
+    },
+    colors: ['#4caf50', '#e53935', '#2d5016'],
+    xaxis: {
+      categories: [],
+      labels: {
+        style: {
+          fontSize: '12px',
+          fontFamily: 'Inter, sans-serif',
+        }
+      }
+    },
+    yaxis: {
+      labels: {
+        formatter: (val) => `$${val.toLocaleString()}`,
+        style: {
+          fontSize: '12px',
+          fontFamily: 'Inter, sans-serif',
+        }
+      }
+    },
+    legend: {
+      position: 'top',
+      horizontalAlign: 'right',
+      fontSize: '14px',
+      fontFamily: 'Inter, sans-serif',
+    },
+    grid: {
+      strokeDashArray: 3,
+      borderColor: '#e0e0e0'
+    },
+    tooltip: {
+      y: {
+        formatter: (val) => `$${val.toLocaleString()}`
+      }
+    },
+    dataLabels: {
+      enabled: false
+    }
+  });
   if (loading) {
     return <Loading variant="table" />;
   }
@@ -201,11 +363,13 @@ const Finances = ({ selectedFarm }) => {
     );
   }
 
-  const { expenses, income, profit } = getFinancialStats();
+const { expenses, income, profit, chartData } = getFinancialStats();
   const tabData = getTabCounts();
   const periodLabel = timePeriod === "month" ? "This Month" : 
                     timePeriod === "lastMonth" ? "Last Month" : "This Year";
 
+  const expenseChartOptions = getExpenseChartOptions();
+  const timelineChartOptions = getTimelineChartOptions();
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -257,7 +421,80 @@ const Finances = ({ selectedFarm }) => {
           change={profit >= 0 ? "Profitable" : "Loss"}
         />
       </div>
+{/* Charts Section */}
+        <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 mb-6">
+          {/* Expense Distribution Chart */}
+          <Card className="p-6">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-semibold text-primary">Expense Distribution</h3>
+              <ApperIcon name="PieChart" size={20} className="text-secondary" />
+            </div>
+            {chartData?.expenseDistribution?.values?.length > 0 ? (
+              <div className="h-80">
+                <Chart
+                  options={{
+                    ...expenseChartOptions,
+                    labels: chartData.expenseDistribution.categories
+                  }}
+                  series={chartData.expenseDistribution.values}
+                  type="donut"
+                  height="100%"
+                />
+              </div>
+            ) : (
+              <div className="h-80 flex items-center justify-center text-gray-500">
+                <div className="text-center">
+                  <ApperIcon name="PieChart" size={48} className="mx-auto mb-2 opacity-50" />
+                  <p>No expense data for {periodLabel.toLowerCase()}</p>
+                </div>
+              </div>
+            )}
+          </Card>
 
+          {/* Income vs Expenses Timeline */}
+          <Card className="p-6">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-semibold text-primary">Income vs Expenses Over Time</h3>
+              <ApperIcon name="TrendingUp" size={20} className="text-secondary" />
+            </div>
+            {chartData?.timelineData?.length > 0 ? (
+              <div className="h-80">
+                <Chart
+                  options={{
+                    ...timelineChartOptions,
+                    xaxis: {
+                      ...timelineChartOptions.xaxis,
+                      categories: chartData.timelineData.map(d => d.month)
+                    }
+                  }}
+                  series={[
+                    {
+                      name: 'Income',
+                      data: chartData.timelineData.map(d => d.income)
+                    },
+                    {
+                      name: 'Expenses',
+                      data: chartData.timelineData.map(d => d.expenses)
+                    },
+                    {
+                      name: 'Profit',
+                      data: chartData.timelineData.map(d => d.profit)
+                    }
+                  ]}
+                  type="line"
+                  height="100%"
+                />
+              </div>
+            ) : (
+              <div className="h-80 flex items-center justify-center text-gray-500">
+                <div className="text-center">
+                  <ApperIcon name="TrendingUp" size={48} className="mx-auto mb-2 opacity-50" />
+                  <p>No timeline data for {periodLabel.toLowerCase()}</p>
+                </div>
+              </div>
+            )}
+          </Card>
+        </div>
       {/* Search and Filters */}
       <div className="space-y-4">
         <SearchBar
