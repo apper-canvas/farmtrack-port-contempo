@@ -19,13 +19,16 @@ class TransactionService {
     return { ...transaction };
   }
 
-  async create(transactionData) {
+async create(transactionData) {
     await new Promise(resolve => setTimeout(resolve, 400));
     
     const maxId = Math.max(...this.data.map(item => item.Id), 0);
     const newTransaction = {
       Id: maxId + 1,
       ...transactionData,
+      // Ensure farmId and cropId are integers when provided, empty string when not
+      farmId: transactionData.farmId ? parseInt(transactionData.farmId) : "",
+      cropId: transactionData.cropId ? parseInt(transactionData.cropId) : "",
       createdAt: new Date().toISOString()
     };
     
