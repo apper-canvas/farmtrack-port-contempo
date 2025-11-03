@@ -92,17 +92,55 @@ const [isModalOpen, setIsModalOpen] = useState(false);
     setIsModalOpen(true);
   };
 
-  const handleSaveTransaction = async (transactionData) => {
+const handleSaveTransaction = async (transactionData) => {
     try {
       if (editingTransaction) {
         await transactionService.update(editingTransaction.Id, transactionData);
-        setTransactions(prev => prev.map(tx => 
+        const updatedTransactions = transactions.map(tx => 
           tx.Id === editingTransaction.Id ? { ...tx, ...transactionData } : tx
-        ));
+        );
+        setTransactions(updatedTransactions);
+        
+        // Update filtered transactions immediately
+        let filtered = updatedTransactions;
+        if (selectedFarm) {
+          filtered = filtered.filter(tx => tx.farmId === selectedFarm);
+        }
+        if (searchQuery.trim()) {
+          filtered = filtered.filter(tx =>
+            tx.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            tx.category.toLowerCase().includes(searchQuery.toLowerCase())
+          );
+        }
+        if (activeTab !== "all") {
+          filtered = filtered.filter(tx => tx.type === activeTab);
+        }
+        filtered.sort((a, b) => new Date(b.date) - new Date(a.date));
+        setFilteredTransactions(filtered);
+        
         toast.success("Transaction updated successfully!");
       } else {
         const newTransaction = await transactionService.create(transactionData);
-        setTransactions(prev => [...prev, newTransaction]);
+        const updatedTransactions = [...transactions, newTransaction];
+        setTransactions(updatedTransactions);
+        
+        // Update filtered transactions immediately
+        let filtered = updatedTransactions;
+        if (selectedFarm) {
+          filtered = filtered.filter(tx => tx.farmId === selectedFarm);
+        }
+        if (searchQuery.trim()) {
+          filtered = filtered.filter(tx =>
+            tx.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            tx.category.toLowerCase().includes(searchQuery.toLowerCase())
+          );
+        }
+        if (activeTab !== "all") {
+          filtered = filtered.filter(tx => tx.type === activeTab);
+        }
+        filtered.sort((a, b) => new Date(b.date) - new Date(a.date));
+        setFilteredTransactions(filtered);
+        
         toast.success("Transaction added successfully!");
       }
     } catch (err) {
